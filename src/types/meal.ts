@@ -1,4 +1,4 @@
-import type { Item } from "./item"
+import type { Item } from "./"
 
 export interface Meal{
   id : string
@@ -7,15 +7,23 @@ export interface Meal{
   items : Ingredient[]
 }
 
+export interface MealDto{
+  name : string
+  localName : string
+  items : Ingredient[]
+}
+
 export interface Ingredient{
   quantity : number
-  weight ?: Units
+  weight ?: number
+  unit ?: Units
   item : Item
 }
 
 export const Units = {
   TSP: 'tsp',
-  grams: 'gr',
+  GRAMS: 'g',
   TBSP: 'tbsp',
+  UNIT: 'unit',
 } as const;
 export type Units = typeof Units[keyof typeof Units];

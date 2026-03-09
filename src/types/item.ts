@@ -3,3 +3,8 @@ export interface Item{
   name : string
   nutriens ?: string
 }
+
+export interface ItemDto{
+  name : string
+  nutriens ?: string
+}

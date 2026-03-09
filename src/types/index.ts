@@ -1,2 +1,3 @@
-export type { Item } from '@/types/item' 
-export type { Meal, Ingredient, Units } from '@/types/meal'
+export type { Item, ItemDto } from '@/types/item' 
+export type { Meal, MealDto, Ingredient } from '@/types/meal'
+export {  Units } from '@/types/meal'
