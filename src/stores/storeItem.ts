@@ -1,8 +1,8 @@
 import type { Item } from "@/types";
 import { useStorage } from "@vueuse/core";
 
-export const useMeals = () => {
-	const storeItems = useStorage<Item[]>(
+export const useItems = () => {
+	const items = useStorage<Item[]>(
 		"my-itemss",
     [],
 		undefined,
@@ -25,21 +25,21 @@ export const useMeals = () => {
 	);
 
   const addItem =  (val : Item) =>{
-    const ids = storeItems.value.map(v => v.id)
+    const ids = items.value.map(v => v.id)
     if(ids.includes(val.id)) return false
-    storeItems.value.push(val)
+    items.value.push(val)
     return true
   }
 
   const deleteItem = (item: Item) =>{
-    const index = storeItems.value.indexOf(item)
+    const index = items.value.indexOf(item)
     if(index === -1) return false
-    storeItems.value.splice(index, 1)
+    items.value.splice(index, 1)
     return true
   }
 
   return {
-    storeItems,
+    items,
     addItem,
     deleteItem
   }

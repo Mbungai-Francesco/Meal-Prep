@@ -2,7 +2,7 @@ import type { Meal } from "@/types";
 import { useStorage } from "@vueuse/core";
 
 export const useMeals = () => {
-	const storeMeals = useStorage<Meal[]>(
+	const meals = useStorage<Meal[]>(
 		"my-meals",
     [],
 		undefined,
@@ -25,21 +25,21 @@ export const useMeals = () => {
 	);
 
   const addMeal =  (val : Meal) =>{
-    const ids = storeMeals.value.map(v => v.id)
+    const ids = meals.value.map(v => v.id)
     if(ids.includes(val.id)) return false
-    storeMeals.value.push(val)
+    meals.value.push(val)
     return true
   }
 
   const deleteMeal = (meal: Meal) =>{
-    const index = storeMeals.value.indexOf(meal)
+    const index = meals.value.indexOf(meal)
     if(index === -1) return false
-    storeMeals.value.splice(index, 1)
+    meals.value.splice(index, 1)
     return true
   }
 
   return {
-    storeMeals,
+    meals,
     addMeal,
     deleteMeal
   }

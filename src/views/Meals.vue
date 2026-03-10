@@ -9,6 +9,11 @@ import {
 } from "@/types";
 import { computed, reactive, ref } from "vue";
 import { X } from "lucide-vue-next";
+import { useMeals } from "@/stores/storeMeals";
+import { useItems } from "@/stores/storeItem";
+
+const { meals, addMeal } = useMeals()
+const { items, addItem } = useItems()
 
 const selectedItem = ref<Item>();
 const ingre = ref<Ingredient>({
@@ -25,39 +30,40 @@ const meal = reactive<MealDto>({
 	items: [],
 });
 const selected = reactive<Array<Ingredient>>([
-	{
-		quantity: 2,
-		weight: 200,
-		unit: Units.GRAMS,
-		item: { id: "618f2302-ee66-42a0-b040-355ce01e7afg", name: "Lentil" },
-	},
-	{
-		quantity: 3,
-		unit: Units.TBSP,
-		item: { id: "618f2302-ee66-42a0-b040-355ce01e7afh", name: "Wine Vinegar" },
-	},
-	{
-		quantity: 1,
-		item: { id: "618f2302-ee66-42a0-b040-355ce01e7aff", name: "Red Onion" },
-	},
+	// {
+	// 	quantity: 2,
+	// 	weight: 200,
+	// 	unit: Units.GRAMS,
+	// 	item: { id: "618f2302-ee66-42a0-b040-355ce01e7afg", name: "Lentil" },
+	// },
+	// {
+	// 	quantity: 3,
+	// 	unit: Units.TBSP,
+	// 	item: { id: "618f2302-ee66-42a0-b040-355ce01e7afh", name: "Wine Vinegar" },
+	// },
+	// {
+	// 	quantity: 1,
+	// 	item: { id: "618f2302-ee66-42a0-b040-355ce01e7aff", name: "Red Onion" },
+	// },
 ]);
 
-const items = reactive<Array<Item>>([
-	{ id: "0c65aab2-39a1-4045-9160-bf1eeaba840c", name: "a" },
-	{ id: "e7af018c-3a1f-4e91-bdcc-65a6b8a819ea", name: "b" },
-	{ id: "286657b9-5703-4753-a393-036a74a08b41", name: "c" },
-	{ id: "9f8ef973-7908-4d26-9d1e-4f5dbf23694d", name: "d" },
-	{ id: "618f2302-ee66-42a0-b040-355ce01e7af7", name: "e" },
-]);
+// const items = reactive<Array<Item>>([
+// 	{ id: "0c65aab2-39a1-4045-9160-bf1eeaba840c", name: "a" },
+// 	{ id: "e7af018c-3a1f-4e91-bdcc-65a6b8a819ea", name: "b" },
+// 	{ id: "286657b9-5703-4753-a393-036a74a08b41", name: "c" },
+// 	{ id: "9f8ef973-7908-4d26-9d1e-4f5dbf23694d", name: "d" },
+// 	{ id: "618f2302-ee66-42a0-b040-355ce01e7af7", name: "e" },
+// ]);
 
-const meals = reactive<Array<Meal>>([]);
+// const meals = reactive<Array<Meal>>([]);
 
 const addToSelected = (id: string) => {
-	const num = items.findIndex((v) => v.id === id);
-	const val = items[num] ? items[num] : null;
+	const inItems = filtered.value
+	const num = inItems.findIndex((v) => v.id === id);
+	const val = inItems[num] ? inItems[num] : null;
 
 	if (val) {
-		items.splice(num, 1);
+		// inItems.splice(num, 1);
 		selected.push({ ...ingre.value, item: val });
 
 		selectedItem.value = undefined;
@@ -75,14 +81,14 @@ const removeApp = (id: string) => {
 
 	if (ingredient) {
 		selected.splice(num, 1);
-		items.push(ingredient.item);
+		// items.push(ingredient.item);
 	}
 };
 
 const filtered = computed(() => {
 	const arr: Array<Item> = [];
 	const idList = selected.map((v) => v.item.id);
-	items.forEach((element) => {
+	items.value.forEach((element) => {
 		!idList.includes(element.id) && arr.push(element);
 	});
 
@@ -93,7 +99,8 @@ const createItem = () => {
 	const newId = newItem.value.name.split(" ").join("").toLowerCase();
 	const val: Item = { ...newItem.value, id: newId };
 
-	items.push(val);
+	// items.push(val);
+	addItem(val)
 	newItem.value = {
 		name: "",
 		nutriens: "",
@@ -102,9 +109,10 @@ const createItem = () => {
 
 const createMeal = () => {
 	const newId = meal.name.split(" ").join("").toLowerCase();
-	const val: Meal = { ...meal, id: newId };
+	const val: Meal = { ...meal, id: newId, items : selected };
 
-	meals.push(val);
+	// meals.value.push(val);
+	addMeal(val)
 	Object.assign(meal, {
 		name: "",
 		localName: "",
@@ -194,7 +202,8 @@ const createMeal = () => {
 				</label>
 				<button
 					type="submit"
-					class="w-full bg-blue-300 p-2 rounded-2xl cursor-pointer font-semibold"
+					class="w-full bg-blue-300 p-2 rounded-2xl cursor-pointer font-semibold disabled:bg-sky-100"
+					:disabled="!ingre.unit"
 				>
 					Add
 				</button>
