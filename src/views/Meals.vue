@@ -96,11 +96,8 @@ const filtered = computed(() => {
 });
 
 const createItem = () => {
-	const newId = newItem.value.name.split(" ").join("").toLowerCase();
-	const val: Item = { ...newItem.value, id: newId };
-
 	// items.push(val);
-	addItem(val)
+	addItem(newItem.value)
 	newItem.value = {
 		name: "",
 		nutriens: "",
@@ -108,11 +105,8 @@ const createItem = () => {
 };
 
 const createMeal = () => {
-	const newId = meal.name.split(" ").join("").toLowerCase();
-	const val: Meal = { ...meal, id: newId, items : selected };
-
 	// meals.value.push(val);
-	addMeal(val)
+	addMeal(meal, selected)
 	Object.assign(meal, {
 		name: "",
 		localName: "",
