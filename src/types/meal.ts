@@ -25,5 +25,6 @@ export const Units = {
   GRAMS: 'g',
   TBSP: 'tbsp',
   UNIT: 'unit',
+  ML: 'ml',
 } as const;
 export type Units = typeof Units[keyof typeof Units];

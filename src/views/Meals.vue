@@ -11,9 +11,10 @@ import { computed, reactive, ref } from "vue";
 import { X } from "lucide-vue-next";
 import { useMeals } from "@/stores/storeMeals";
 import { useItems } from "@/stores/storeItem";
+import IngredientComponent from "@/components/ingredient.component.vue";
 
-const { meals, addMeal } = useMeals()
-const { items, addItem } = useItems()
+const { meals, addMeal } = useMeals();
+const { items, addItem } = useItems();
 
 const selectedItem = ref<Item>();
 const ingre = ref<Ingredient>({
@@ -29,36 +30,10 @@ const meal = reactive<MealDto>({
 	localName: "",
 	items: [],
 });
-const selected = reactive<Array<Ingredient>>([
-	// {
-	// 	quantity: 2,
-	// 	weight: 200,
-	// 	unit: Units.GRAMS,
-	// 	item: { id: "618f2302-ee66-42a0-b040-355ce01e7afg", name: "Lentil" },
-	// },
-	// {
-	// 	quantity: 3,
-	// 	unit: Units.TBSP,
-	// 	item: { id: "618f2302-ee66-42a0-b040-355ce01e7afh", name: "Wine Vinegar" },
-	// },
-	// {
-	// 	quantity: 1,
-	// 	item: { id: "618f2302-ee66-42a0-b040-355ce01e7aff", name: "Red Onion" },
-	// },
-]);
-
-// const items = reactive<Array<Item>>([
-// 	{ id: "0c65aab2-39a1-4045-9160-bf1eeaba840c", name: "a" },
-// 	{ id: "e7af018c-3a1f-4e91-bdcc-65a6b8a819ea", name: "b" },
-// 	{ id: "286657b9-5703-4753-a393-036a74a08b41", name: "c" },
-// 	{ id: "9f8ef973-7908-4d26-9d1e-4f5dbf23694d", name: "d" },
-// 	{ id: "618f2302-ee66-42a0-b040-355ce01e7af7", name: "e" },
-// ]);
-
-// const meals = reactive<Array<Meal>>([]);
+const selected = reactive<Array<Ingredient>>([]);
 
 const addToSelected = (id: string) => {
-	const inItems = filtered.value
+	const inItems = filtered.value;
 	const num = inItems.findIndex((v) => v.id === id);
 	const val = inItems[num] ? inItems[num] : null;
 
@@ -97,7 +72,7 @@ const filtered = computed(() => {
 
 const createItem = () => {
 	// items.push(val);
-	addItem(newItem.value)
+	addItem(newItem.value);
 	newItem.value = {
 		name: "",
 		nutriens: "",
@@ -106,7 +81,7 @@ const createItem = () => {
 
 const createMeal = () => {
 	// meals.value.push(val);
-	addMeal(meal, selected)
+	addMeal(meal, selected);
 	Object.assign(meal, {
 		name: "",
 		localName: "",
@@ -118,7 +93,6 @@ const createMeal = () => {
 <template>
 	<div class="h-full flex">
 		<div class="w-1/2 border">
-
 			<form class="p-2 flex flex-col gap-2" @submit.prevent="createMeal">
 				<h3 class="font-semibold text-2xl">Meal form</h3>
 				<label class="label" for="">
@@ -220,11 +194,14 @@ const createMeal = () => {
 			</form>
 		</div>
 		<div class="w-1/2 border px-7 py-4 bg-pink-400">
-      <ul>
-        <li class="list-disc" v-for="val in meals" :key="val.id" >
-          {{ val.name }}
-        </li>
-      </ul>
-    </div>
+			<ul>
+				<li class="list-disc" v-for="val in meals" :key="val.id">
+					{{ val.name }}
+					<div class="flex flex-wrap gap-4">
+						<IngredientComponent v-for="item in val.items" :ingredient="item" />
+					</div>
+				</li>
+			</ul>
+		</div>
 	</div>
 </template>

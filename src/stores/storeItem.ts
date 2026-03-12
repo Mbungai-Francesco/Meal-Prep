@@ -29,11 +29,9 @@ export const useItems = () => {
 		return true;
 	};
 
-	const deleteItem = (item: Item) => {
-		const index = items.value.indexOf(item);
-		if (index === -1) return false;
-		items.value.splice(index, 1);
-		return true;
+	const deleteItem = (id : string) => {
+		const res = items.value.filter(v => v.id != id)
+		items.value = res
 	};
 
 	return {
