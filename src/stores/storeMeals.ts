@@ -30,16 +30,22 @@ export const useMeals = () => {
 		return true;
 	};
 
-	const deleteMeal = (meal: Meal) => {
-		const index = meals.value.indexOf(meal);
+	const updateMeal = (meal: Meal) => {
+		const index = meals.value.findIndex((m) => m.id === meal.id);
 		if (index === -1) return false;
-		meals.value.splice(index, 1);
+		meals.value[index] = meal;
 		return true;
+	};
+
+	const deleteMeal = (id : string) => {
+		const res = meals.value.filter((v) => v.id !== id)
+		meals.value = [...res]
 	};
 
 	return {
 		meals,
 		addMeal,
 		deleteMeal,
+		updateMeal,
 	};
 };

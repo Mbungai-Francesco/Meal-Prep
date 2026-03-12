@@ -8,12 +8,12 @@ import {
 	type MealDto,
 } from "@/types";
 import { computed, reactive, ref } from "vue";
-import { X } from "lucide-vue-next";
+import { X, Trash } from "lucide-vue-next";
 import { useMeals } from "@/stores/storeMeals";
 import { useItems } from "@/stores/storeItem";
 import IngredientComponent from "@/components/ingredient.component.vue";
 
-const { meals, addMeal } = useMeals();
+const { meals, addMeal, updateMeal, deleteMeal } = useMeals();
 const { items, addItem } = useItems();
 
 const selectedItem = ref<Item>();
@@ -31,6 +31,8 @@ const meal = reactive<MealDto>({
 	items: [],
 });
 const selected = reactive<Array<Ingredient>>([]);
+const selectedId = ref("");
+const deleting = ref(false);
 
 const addToSelected = (id: string) => {
 	const inItems = filtered.value;
@@ -79,21 +81,55 @@ const createItem = () => {
 	};
 };
 
-const createMeal = () => {
-	// meals.value.push(val);
-	addMeal(meal, selected);
+const resetMeal = () => {
 	Object.assign(meal, {
 		name: "",
 		localName: "",
 		items: [],
 	});
+	selected.splice(0);
+	selectedId.value = "";
+};
+
+const handleForm = () => {
+	// console.log(selectedId.value);
+	selectedId.value ? changeMeal() : createMeal();
+};
+
+const createMeal = () => {
+	// meals.value.push(val);
+
+	const res = addMeal(meal, [...selected]);
+	if (res) resetMeal();
+};
+
+const changeMeal = () => {
+	const res = updateMeal({
+		...meal,
+		id: selectedId.value,
+		items: [...selected],
+	});
+	// console.log(res);
+
+	if (res) resetMeal();
+};
+
+const setUpdateMeal = (val: Meal) => {
+	Object.assign(meal, { ...val });
+	selectedId.value = val.id;
+	selected.splice(0, selected.length, ...val.items);
+};
+
+const remove = () => {
+	deleteMeal(selectedId.value);
+	selectedId.value = "";
 };
 </script>
 
 <template>
 	<div class="h-full flex">
 		<div class="w-1/2 border">
-			<form class="p-2 flex flex-col gap-2" @submit.prevent="createMeal">
+			<form class="p-2 flex flex-col gap-2" @submit.prevent="handleForm">
 				<h3 class="font-semibold text-2xl">Meal form</h3>
 				<label class="label" for="">
 					Name :
@@ -136,9 +172,9 @@ const createMeal = () => {
 				<button
 					type="submit"
 					class="w-full bg-blue-300 p-2 rounded-2xl cursor-pointer font-semibold disabled:bg-sky-100"
-					:disabled="!meal.name || selected.length < 4"
+					:disabled="!meal.name || selected.length < 2"
 				>
-					Create recipe
+					{{ selectedId ? "Update" : "Create" }} recipe
 				</button>
 			</form>
 
@@ -171,7 +207,7 @@ const createMeal = () => {
 				<button
 					type="submit"
 					class="w-full bg-blue-300 p-2 rounded-2xl cursor-pointer font-semibold disabled:bg-sky-100"
-					:disabled="!ingre.unit"
+					:disabled="!ingre.unit || (!ingre.quantity && !ingre.weight)"
 				>
 					Add
 				</button>
@@ -193,10 +229,49 @@ const createMeal = () => {
 				</button>
 			</form>
 		</div>
-		<div class="w-1/2 border px-7 py-4 bg-pink-400">
+		<div class="w-1/2 border px-7 py-4">
 			<ul>
-				<li class="list-disc" v-for="val in meals" :key="val.id">
-					{{ val.name }}
+				<li
+					class="list-disc hover:bg-slate-100 cursor-pointer p-2"
+					v-for="val in meals"
+					:key="val.id"
+				>
+					<div class="flex items-center gap-4 py-2">
+						<p>
+							{{ val.name }}
+						</p>
+						<button
+							@click="setUpdateMeal(val)"
+							class="rounded-lg cursor-pointer bg-blue-800 text-white font-semibold py-1 px-2"
+						>
+							Update
+						</button>
+						<Trash
+							v-if="!deleting"
+							class="text-red-300 cursor-pointer hover:bg-slate-200"
+							@click="()=>{
+								deleting = true
+								selectedId = val.id
+							}"
+						/>
+						<div class="flex gap-2" v-if="deleting">
+							<button
+								@click="remove"
+								class="rounded-lg cursor-pointer bg-red-700 text-white font-semibold py-1 px-2"
+							>
+								Yes
+							</button>
+							<button
+								@click="()=>{
+									selectedId = ''
+									deleting = false
+								}"
+								class="rounded-lg cursor-pointer bg-green-800 text-white font-semibold py-1 px-2"
+							>
+								No
+							</button>
+						</div>
+					</div>
 					<div class="flex flex-wrap gap-4">
 						<IngredientComponent v-for="item in val.items" :ingredient="item" />
 					</div>

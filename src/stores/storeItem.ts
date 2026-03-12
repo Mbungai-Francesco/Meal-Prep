@@ -31,7 +31,7 @@ export const useItems = () => {
 
 	const deleteItem = (id : string) => {
 		const res = items.value.filter(v => v.id != id)
-		items.value = res
+		items.value = [...res]
 	};
 
 	return {

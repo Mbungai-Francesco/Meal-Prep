@@ -13,7 +13,7 @@ const selected = reactive<Item>({...emptyItem});
 
 const createItem = () => {
 	// items.push(val);
-	addItem(newItem.value);
+	addItem({...newItem.value});
 	newItem.value = {
 		name: "",
 		nutriens: "",
