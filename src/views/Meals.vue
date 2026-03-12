@@ -69,7 +69,7 @@ const filtered = computed(() => {
 		!idList.includes(element.id) && arr.push(element);
 	});
 
-	return arr;
+	return arr.sort((a, b) => a.name.localeCompare(b.name));
 });
 
 const createItem = () => {
@@ -189,7 +189,7 @@ const remove = () => {
 				</h3>
 				<label class="label" for="">
 					Quantity :
-					<input type="number" placeholder="3" v-model="ingre.quantity" />
+					<input type="number" step="0.5" placeholder="3" v-model="ingre.quantity" />
 				</label>
 				<label class="label" for="">
 					Weight :
